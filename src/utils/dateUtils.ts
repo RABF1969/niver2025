@@ -1,24 +1,14 @@
-// utils/dateUtils.ts
-
-// 🔧 Função auxiliar para normalizar string de data
-const parseDate = (data: string): Date => {
-  // Caso venha no formato DD/MM/YYYY → converter para YYYY-MM-DD
-  if (data.includes("/")) {
-    const [dia, mes, ano] = data.split("/");
-    return new Date(`${ano}-${mes}-${dia}T00:00:00`);
-  }
-  // Caso já esteja no formato ISO (YYYY-MM-DD)
-  return new Date(data + "T00:00:00");
-};
-
 export const calcularIdade = (dataNascimento: string): number => {
   const hoje = new Date();
-  const nascimento = parseDate(dataNascimento);
+  const [ano, mes, dia] = dataNascimento.split("-").map(Number);
 
-  let idade = hoje.getFullYear() - nascimento.getFullYear();
-  const mes = hoje.getMonth() - nascimento.getMonth();
+  let idade = hoje.getFullYear() - ano;
 
-  if (mes < 0 || (mes === 0 && hoje.getDate() < nascimento.getDate())) {
+  // Ajusta se ainda não fez aniversário este ano
+  if (
+    mes - 1 > hoje.getMonth() ||
+    (mes - 1 === hoje.getMonth() && dia > hoje.getDate())
+  ) {
     idade--;
   }
 
@@ -26,20 +16,19 @@ export const calcularIdade = (dataNascimento: string): number => {
 };
 
 export const formatarData = (data: string): string => {
-  const dataObj = parseDate(data);
-  return dataObj.toLocaleDateString("pt-BR");
+  if (!data) return "";
+  const [ano, mes, dia] = data.split("-");
+  return `${dia}/${mes}/${ano}`;
 };
 
 export const ehAniversarioHoje = (dataNascimento: string): boolean => {
+  if (!dataNascimento) return false;
+
+  const [ano, mes, dia] = dataNascimento.split("-").map(Number);
+
   const hoje = new Date();
-  const nascimento = parseDate(dataNascimento);
+  const diaHoje = hoje.getDate();
+  const mesHoje = hoje.getMonth() + 1; // getMonth() começa em 0
 
-  return (
-    hoje.getMonth() === nascimento.getMonth() &&
-    hoje.getDate() === nascimento.getDate()
-  );
-};
-
-export const gerarId = (): string => {
-  return Date.now().toString() + Math.random().toString(36).substr(2, 9);
+  return dia === diaHoje && mes === mesHoje;
 };
