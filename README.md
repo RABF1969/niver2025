@@ -1,11 +1,11 @@
-# 🎂 Dashboard Aniversariantes - Igreja Ramá
+# 🎂 Dashboard Aniversariantes
 
 ![Vite](https://img.shields.io/badge/vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)
 ![React](https://img.shields.io/badge/react-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
 ![TailwindCSS](https://img.shields.io/badge/tailwindcss-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/typescript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
 
-Sistema de gerenciamento de aniversariantes da **Igreja Ramá** com interface moderna, responsiva e dark mode.
+Sistema de gerenciamento de aniversariantes da **Igreja** com interface moderna, responsiva e dark mode.
 
 ---
 
