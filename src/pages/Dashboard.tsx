@@ -148,7 +148,7 @@ const Dashboard: React.FC = () => {
             Dashboard de Aniversariantes
           </h1>
           <p className="text-gray-600 dark:text-gray-400 mt-1">
-            Gerencie os aniversariantes da Igreja Ramá
+            Gerencie os aniversariantes da sua Igreja
           </p>
         </div>
         <div className="flex gap-3">
