@@ -1,54 +1,57 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Dashboard from "./pages/Dashboard";
-import Hoje from "./pages/Hoje";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import Dashboard from "./pages/Dashboard";
+import Hoje from "./pages/Hoje";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-const App: React.FC = () => {
-  const [darkMode, setDarkMode] = useState<boolean>(false);
+function App() {
+  const [darkMode, setDarkMode] = useState(false);
 
-  // Carregar preferência salva no localStorage
+  // carregar preferência do usuário (localStorage)
   useEffect(() => {
-    const savedMode = localStorage.getItem("darkMode");
-    if (savedMode) {
-      setDarkMode(savedMode === "true");
+    const savedTheme = localStorage.getItem("darkMode");
+    if (savedTheme === "true") {
+      setDarkMode(true);
+      document.documentElement.classList.add("dark");
     }
   }, []);
 
-  // Aplicar a classe dark no <html>
-  useEffect(() => {
-    if (darkMode) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-    localStorage.setItem("darkMode", darkMode.toString());
-  }, [darkMode]);
-
   const toggleDarkMode = () => {
-    setDarkMode((prev) => !prev);
+    const newMode = !darkMode;
+    setDarkMode(newMode);
+    localStorage.setItem("darkMode", String(newMode));
+    document.documentElement.classList.toggle("dark", newMode);
   };
 
   return (
     <Router>
-      <div className="flex flex-col min-h-screen bg-gray-100 dark:bg-gray-900">
-        {/* Navbar */}
+      <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
         <Navbar darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
-
-        {/* Conteúdo principal */}
-        <main className="flex-grow">
+        <main className="flex-grow pt-16">
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/hoje" element={<Hoje />} />
           </Routes>
         </main>
-
-        {/* Footer */}
         <Footer />
+
+        {/* Toasts */}
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop={true}
+          closeOnClick
+          draggable
+          pauseOnHover
+          theme={darkMode ? "dark" : "light"}
+        />
       </div>
     </Router>
   );
-};
+}
 
 export default App;
