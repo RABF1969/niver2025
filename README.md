@@ -10,7 +10,7 @@ Sistema de gerenciamento de aniversariantes da **Igreja Ramá** com interface mo
 ---
 
 ## 🔗 Preview Online
-👉 [Acesse a demo aqui](https://seu-projeto.vercel.app) *(link será atualizado após o deploy na Vercel)*
+👉 [Acesse a demo aqui](https://niver.alfabiz.com.br) *(link será atualizado após o deploy na Vercel)*
 
 ---
 

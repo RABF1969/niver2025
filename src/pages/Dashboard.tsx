@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Aniversariante, AniversarianteFormData } from "../types";
-import { calcularIdade, ehAniversarioHoje } from "../utils/dateUtils";
+import { ehAniversarioHoje } from "../utils/dateUtils";
 import AniversarianteTable from "../components/AniversarianteTable";
 import AniversarianteForm from "../components/AniversarianteForm";
 import { supabase } from "../lib/supabase";
