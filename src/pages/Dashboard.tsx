@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Aniversariante, AniversarianteFormData } from "../types";
 import { ehAniversarioHoje } from "../utils/dateUtils";
 import AniversarianteTable from "../components/AniversarianteTable";
@@ -6,16 +6,16 @@ import AniversarianteForm from "../components/AniversarianteForm";
 import { supabase } from "../lib/supabase";
 import { toast } from "react-toastify";
 
-const Dashboard: React.FC = () => {
+const Dashboard = () => {
   const [aniversariantes, setAniversariantes] = useState<Aniversariante[]>([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingAniversariante, setEditingAniversariante] = useState<Aniversariante | undefined>();
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [mesFiltro, setMesFiltro] = useState<string>("");
-  const [limit, setLimit] = useState<number>(5); // limite de registros exibidos
+  const [limit, setLimit] = useState<number>(5); // 🔥 limite inicial
 
-  // Buscar aniversariantes no Supabase
+  // Buscar aniversariantes
   useEffect(() => {
     const fetchAniversariantes = async () => {
       try {
@@ -29,7 +29,7 @@ const Dashboard: React.FC = () => {
         setAniversariantes(data || []);
       } catch (err) {
         console.error("❌ Erro ao carregar aniversariantes:", err);
-        toast.error("Erro ao carregar aniversariantes!");
+        toast.error("Erro ao carregar aniversariantes.");
       } finally {
         setLoading(false);
       }
@@ -47,6 +47,7 @@ const Dashboard: React.FC = () => {
   const handleSave = async (formData: AniversarianteFormData) => {
     try {
       if (editingAniversariante) {
+        // Atualização
         const { error } = await supabase
           .from("aniversariantes")
           .update(formData)
@@ -62,6 +63,7 @@ const Dashboard: React.FC = () => {
 
         toast.success("✏️ Aniversariante atualizado com sucesso!");
       } else {
+        // Inserção
         const { data, error } = await supabase
           .from("aniversariantes")
           .insert([formData])
@@ -69,15 +71,17 @@ const Dashboard: React.FC = () => {
 
         if (error) throw error;
 
-        if (data) setAniversariantes((prev) => [...prev, ...data]);
-
-        toast.success("🎉 Aniversariante cadastrado com sucesso!");
+        if (data) {
+          setAniversariantes((prev) => [...prev, ...data]);
+          toast.success("✅ Aniversariante cadastrado com sucesso!");
+        }
       }
+
       setIsFormOpen(false);
       setEditingAniversariante(undefined);
     } catch (err) {
       console.error("❌ Erro ao salvar aniversariante:", err);
-      toast.error("Erro ao salvar aniversariante!");
+      toast.error("Erro ao salvar aniversariante.");
     }
   };
 
@@ -96,10 +100,10 @@ const Dashboard: React.FC = () => {
       if (error) throw error;
 
       setAniversariantes((prev) => prev.filter((a) => a.id !== id));
-      toast.success("🗑️ Aniversariante excluído com sucesso!");
+      toast.info("🗑️ Aniversariante excluído com sucesso!");
     } catch (err) {
       console.error("❌ Erro ao excluir aniversariante:", err);
-      toast.error("Erro ao excluir aniversariante!");
+      toast.error("Erro ao excluir aniversariante.");
     }
   };
 
@@ -126,10 +130,8 @@ const Dashboard: React.FC = () => {
     return nomeMatch && mesMatch;
   });
 
-  // Pegar somente os últimos cadastrados
-  const aniversariantesLimitados = aniversariantesFiltrados.slice(
-    Math.max(aniversariantesFiltrados.length - limit, 0)
-  );
+  // Aplicar limite
+  const aniversariantesLimitados = aniversariantesFiltrados.slice(-limit);
 
   if (loading) {
     return (
@@ -148,17 +150,15 @@ const Dashboard: React.FC = () => {
             Dashboard de Aniversariantes
           </h1>
           <p className="text-gray-600 dark:text-gray-400 mt-1">
-            Gerencie os aniversariantes da sua Igreja
+            Gerencie os aniversariantes da Igreja Ramá
           </p>
         </div>
-        <div className="flex gap-3">
-          <button
-            onClick={handleNovo}
-            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
-          >
-            ➕ Novo Aniversariante
-          </button>
-        </div>
+        <button
+          onClick={handleNovo}
+          className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
+        >
+          ➕ Novo Aniversariante
+        </button>
       </div>
 
       {/* Filtros */}
@@ -190,33 +190,22 @@ const Dashboard: React.FC = () => {
         </button>
       </div>
 
-      {/* Cards resumo */}
+      {/* Cards de resumo */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-          <p className="text-sm text-gray-600 dark:text-gray-400">
-            Total de Aniversariantes
-          </p>
-          <p className="text-2xl font-bold text-blue-600">
-            {aniversariantes.length}
-          </p>
+          <p className="text-sm text-gray-600 dark:text-gray-400">Total de Aniversariantes</p>
+          <p className="text-2xl font-bold text-blue-600">{aniversariantes.length}</p>
         </div>
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-          <p className="text-sm text-gray-600 dark:text-gray-400">
-            Aniversariantes Hoje
-          </p>
-          <p className="text-2xl font-bold text-green-600">
-            {aniversariantesHoje.length}
-          </p>
+          <p className="text-sm text-gray-600 dark:text-gray-400">Aniversariantes Hoje</p>
+          <p className="text-2xl font-bold text-green-600">{aniversariantesHoje.length}</p>
         </div>
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
           <p className="text-sm text-gray-600 dark:text-gray-400">Este mês</p>
           <p className="text-2xl font-bold text-purple-600">
-            {
-              aniversariantes.filter(
-                (a) =>
-                  new Date(a.data_nascimento).getMonth() === new Date().getMonth()
-              ).length
-            }
+            {aniversariantes.filter(
+              (a) => new Date(a.data_nascimento).getMonth() === new Date().getMonth()
+            ).length}
           </p>
         </div>
       </div>
@@ -229,18 +218,16 @@ const Dashboard: React.FC = () => {
       />
 
       {/* Controle de exibição */}
-      <div className="flex justify-end mt-4 gap-2">
-        {[5, 10, 50, 100, aniversariantesFiltrados.length].map((num) => (
+      <div className="mt-4 flex justify-end space-x-2">
+        {[5, 10, 50, 100, aniversariantesFiltrados.length].map((n, i) => (
           <button
-            key={num}
-            onClick={() => setLimit(num)}
-            className={`px-3 py-1 rounded-md ${
-              limit === num
-                ? "bg-blue-500 text-white"
-                : "bg-gray-300 dark:bg-gray-700 dark:text-white"
+            key={i}
+            onClick={() => setLimit(n)}
+            className={`px-3 py-1 rounded ${
+              limit === n ? "bg-blue-500 text-white" : "bg-gray-200 dark:bg-gray-700"
             }`}
           >
-            {num === aniversariantesFiltrados.length ? "Todos" : num}
+            {n === aniversariantesFiltrados.length ? "Todos" : n}
           </button>
         ))}
       </div>
