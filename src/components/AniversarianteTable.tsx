@@ -74,10 +74,10 @@ const AniversarianteTable: React.FC<Props> = ({
                   )}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                  {formatarData(aniversariante.dataNascimento)}
+                  {formatarData(aniversariante.data_nascimento)}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                  {calcularIdade(aniversariante.dataNascimento)} anos
+                  {calcularIdade(aniversariante.data_nascimento)} anos
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <div className="flex space-x-2">

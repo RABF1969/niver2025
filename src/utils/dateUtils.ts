@@ -1,14 +1,12 @@
-export const calcularIdade = (dataNascimento: string): number => {
+export const calcularIdade = (data_nascimento: string): number => {
   const hoje = new Date();
-  const [ano, mes, dia] = dataNascimento.split("-").map(Number);
+  const [ano, mes, dia] = data_nascimento.split("-").map(Number);
 
   let idade = hoje.getFullYear() - ano;
+  const mesAtual = hoje.getMonth() + 1;
+  const diaAtual = hoje.getDate();
 
-  // Ajusta se ainda não fez aniversário este ano
-  if (
-    mes - 1 > hoje.getMonth() ||
-    (mes - 1 === hoje.getMonth() && dia > hoje.getDate())
-  ) {
+  if (mesAtual < mes || (mesAtual === mes && diaAtual < dia)) {
     idade--;
   }
 
@@ -16,19 +14,13 @@ export const calcularIdade = (dataNascimento: string): number => {
 };
 
 export const formatarData = (data: string): string => {
-  if (!data) return "";
   const [ano, mes, dia] = data.split("-");
   return `${dia}/${mes}/${ano}`;
 };
 
-export const ehAniversarioHoje = (dataNascimento: string): boolean => {
-  if (!dataNascimento) return false;
-
-  const [ano, mes, dia] = dataNascimento.split("-").map(Number);
-
+export const ehAniversarioHoje = (data_nascimento: string): boolean => {
   const hoje = new Date();
-  const diaHoje = hoje.getDate();
-  const mesHoje = hoje.getMonth() + 1; // getMonth() começa em 0
+  const [, mes, dia] = data_nascimento.split("-").map(Number); // removi ano
 
-  return dia === diaHoje && mes === mesHoje;
+  return hoje.getDate() === dia && hoje.getMonth() + 1 === mes;
 };

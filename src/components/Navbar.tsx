@@ -1,68 +1,63 @@
-import React, { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import React from "react";
+import { Link, NavLink } from "react-router-dom";
+import { Moon, Sun } from "lucide-react";
 
-const Navbar: React.FC = () => {
-  const [darkMode, setDarkMode] = useState(false);
-  const location = useLocation();
+interface NavbarProps {
+  darkMode: boolean;
+  toggleDarkMode: () => void;
+}
 
-  const toggleDarkMode = () => {
-    setDarkMode(!darkMode);
-    document.documentElement.classList.toggle("dark");
-    localStorage.setItem("theme", !darkMode ? "dark" : "light");
-  };
-
-  const isActive = (path: string) => location.pathname === path;
-
+const Navbar: React.FC<NavbarProps> = ({ darkMode, toggleDarkMode }) => {
   return (
-    <nav className="bg-gray-900 text-white shadow-lg fixed w-full top-0 z-50">
+    <nav className="bg-gray-900 text-white shadow-lg dark:bg-gray-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
-          {/* Logo + título */}
-          <div className="flex items-center space-x-3">
+          {/* Logo */}
+          <Link to="/" className="flex items-center">
             <img
-              src="/vite.svg" // depois troca por logo da igreja
-              alt="Logo"
-              className="h-8 w-8"
+              src="/logo.png" // 🔥 coloque sua logo em public/logo.png
+              alt="Logo Alfabiz"
+              className="h-10 w-auto"
             />
-            <h1 className="text-lg font-bold tracking-wide">
-              Aniversariantes Igreja Ramá
-            </h1>
-          </div>
+          </Link>
 
-          {/* Links */}
-          <div className="flex items-center space-x-4">
-            <Link
+          {/* Menu */}
+          <div className="flex items-center space-x-6">
+            <NavLink
               to="/"
-              className={`px-4 py-2 rounded-full text-sm font-medium transition ${
-                isActive("/")
-                  ? "bg-blue-600 text-white"
-                  : "hover:bg-gray-800 text-gray-300"
-              }`}
+              className={({ isActive }) =>
+                isActive
+                  ? "text-blue-400 font-semibold"
+                  : "hover:text-blue-300"
+              }
             >
               Dashboard
-            </Link>
-            <Link
+            </NavLink>
+            <NavLink
               to="/hoje"
-              className={`px-4 py-2 rounded-full text-sm font-medium transition ${
-                isActive("/hoje")
-                  ? "bg-blue-600 text-white"
-                  : "hover:bg-gray-800 text-gray-300"
-              }`}
+              className={({ isActive }) =>
+                isActive
+                  ? "text-blue-400 font-semibold"
+                  : "hover:text-blue-300"
+              }
             >
               Aniversariantes de Hoje
-            </Link>
+            </NavLink>
 
-            {/* Botão dark mode */}
+            {/* Dark Mode Toggle */}
             <button
               onClick={toggleDarkMode}
-              className="p-2 rounded-full hover:bg-gray-800 transition"
-              title="Alternar tema"
+              className="p-2 rounded-full hover:bg-gray-700 dark:hover:bg-gray-600"
             >
-              {darkMode ? "☀️" : "🌙"}
+              {darkMode ? (
+                <Sun className="w-5 h-5 text-yellow-400" />
+              ) : (
+                <Moon className="w-5 h-5 text-gray-300" />
+              )}
             </button>
 
             {/* Logout */}
-            <button className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-full text-sm font-medium transition">
+            <button className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-md text-white">
               Logout
             </button>
           </div>

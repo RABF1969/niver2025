@@ -69,7 +69,7 @@ const AniversariantesDoDia: React.FC<Props> = ({ aniversariantes, onRefresh }) =
                 {aniversariante.nome}
               </h3>
               <p className="text-gray-600 dark:text-gray-400">
-                {calcularIdade(aniversariante.dataNascimento)} anos hoje 🎂
+                {calcularIdade(aniversariante.data_nascimento)} anos hoje 🎂
               </p>
               {aniversariante.observacoes && (
                 <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">

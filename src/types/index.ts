@@ -1,9 +1,10 @@
 // Base com os campos comuns
 interface BaseAniversariante {
   nome: string;
-  dataNascimento: string; // pode ser string (ISO) ou Date
+  data_nascimento: string; // agora está igual ao banco
   foto?: string;
   observacoes?: string;
+  ministerio?: string; // se quiser já deixar reservado
 }
 
 // Usado quando já existe no sistema (com ID)
