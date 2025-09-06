@@ -7,7 +7,7 @@ import { supabase } from "../lib/supabase";
 import { Toaster, toast } from "react-hot-toast";
 
 const Dashboard: React.FC = () => {
-  const [aniversariantes, setAniversariantes] = useState<Aniversariante[]>([]);
+  // Removido: const [aniversariantes, setAniversariantes] = useState<Aniversariante[]>([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingAniversariante, setEditingAniversariante] = useState<Aniversariante | undefined>();
   const [loading, setLoading] = useState(true);
@@ -28,7 +28,7 @@ const Dashboard: React.FC = () => {
         if (error) throw error;
 
         setAllAniversariantes(data || []);
-        setAniversariantes((data || []).slice(0, limit));
+        // Removido: setAniversariantes((data || []).slice(0, limit));
       } catch (err) {
         console.error("❌ Erro ao carregar aniversariantes:", err);
         toast.error("Erro ao carregar aniversariantes.");
