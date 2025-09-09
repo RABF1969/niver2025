@@ -6,7 +6,8 @@ import AvatarFallback from "./AvatarFallback";
 interface Props {
   aniversariantes: Aniversariante[];
   onEdit: (aniversariante: Aniversariante) => void;
-  onDelete: (id: string) => void;
+  onDelete: (id: string, foto?: string) => void; 
+  // 🔹 Agora onDelete recebe também a foto (opcional)
 }
 
 const AniversarianteTable: React.FC<Props> = ({
@@ -14,9 +15,13 @@ const AniversarianteTable: React.FC<Props> = ({
   onEdit,
   onDelete,
 }) => {
-  const handleDelete = (id: string, nome: string) => {
+  /**
+   * Confirmação antes de excluir
+   * Agora passamos também a URL da foto para o onDelete
+   */
+  const handleDelete = (id: string, nome: string, foto?: string) => {
     if (window.confirm(`Tem certeza que deseja excluir ${nome}?`)) {
-      onDelete(id);
+      onDelete(id, foto); 
     }
   };
 
@@ -49,10 +54,10 @@ const AniversarianteTable: React.FC<Props> = ({
                 key={aniversariante.id}
                 className="hover:bg-gray-50 dark:hover:bg-gray-700"
               >
+                {/* Foto */}
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex-shrink-0 h-12 w-12">
-                    {aniversariante.foto &&
-                    aniversariante.foto.trim() !== "" ? (
+                    {aniversariante.foto && aniversariante.foto.trim() !== "" ? (
                       <img
                         className="h-12 w-12 rounded-full object-cover shadow-md"
                         src={aniversariante.foto}
@@ -63,6 +68,8 @@ const AniversarianteTable: React.FC<Props> = ({
                     )}
                   </div>
                 </td>
+
+                {/* Nome + Observações */}
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm font-medium text-gray-900 dark:text-white">
                     {aniversariante.nome}
@@ -73,12 +80,18 @@ const AniversarianteTable: React.FC<Props> = ({
                     </span>
                   )}
                 </td>
+
+                {/* Data de nascimento */}
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
                   {formatarData(aniversariante.data_nascimento)}
                 </td>
+
+                {/* Idade */}
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
                   {calcularIdade(aniversariante.data_nascimento)} anos
                 </td>
+
+                {/* Ações */}
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <div className="flex space-x-2">
                     <button
@@ -90,7 +103,7 @@ const AniversarianteTable: React.FC<Props> = ({
                     </button>
                     <button
                       onClick={() =>
-                        handleDelete(aniversariante.id, aniversariante.nome)
+                        handleDelete(aniversariante.id, aniversariante.nome, aniversariante.foto)
                       }
                       className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 p-1 rounded hover:bg-red-50 dark:hover:bg-red-900/20"
                       title="Excluir"
@@ -104,6 +117,7 @@ const AniversarianteTable: React.FC<Props> = ({
           </tbody>
         </table>
 
+        {/* Mensagem caso não tenha aniversariantes */}
         {aniversariantes.length === 0 && (
           <div className="text-center py-12">
             <div className="text-gray-500 dark:text-gray-400">

@@ -26,7 +26,11 @@ const Login = () => {
       navigate("/");
     } catch (err: any) {
       console.error("Erro ao logar:", err.message);
-      toast.error(`❌ Erro: ${err.message}`);
+      if (err.message.includes("Invalid login credentials")) {
+        toast.error("❌ E-mail ou senha inválidos.");
+      } else {
+        toast.error(`❌ Erro: ${err.message}`);
+      }
     } finally {
       setLoading(false);
     }
@@ -71,16 +75,6 @@ const Login = () => {
             {loading ? "Carregando..." : "Entrar"}
           </button>
         </form>
-
-        <p className="mt-4 text-center text-gray-600 dark:text-gray-400">
-          Ainda não tem uma conta?{" "}
-          <button
-            onClick={() => navigate("/register")} // 🔥 rota já preparada, mas você decide quando ativar
-            className="text-green-500 hover:underline"
-          >
-            Criar conta
-          </button>
-        </p>
       </div>
     </div>
   );

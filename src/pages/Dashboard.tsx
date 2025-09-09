@@ -5,6 +5,7 @@ import AniversarianteTable from "../components/AniversarianteTable";
 import AniversarianteForm from "../components/AniversarianteForm";
 import { supabase } from "../lib/supabase";
 import { toast } from "react-toastify";
+import { deleteImage } from "../utils/deleteImage"; // 🔹 vamos excluir a foto do Storage
 
 const Dashboard = () => {
   const [aniversariantes, setAniversariantes] = useState<Aniversariante[]>([]);
@@ -13,9 +14,11 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [mesFiltro, setMesFiltro] = useState<string>("");
-  const [limit, setLimit] = useState<number>(5); // 🔥 limite inicial
+  const [limit, setLimit] = useState<number>(5); // 🔹 limite inicial da tabela
 
-  // Buscar aniversariantes
+  /**
+   * Carrega aniversariantes do banco
+   */
   useEffect(() => {
     const fetchAniversariantes = async () => {
       try {
@@ -25,7 +28,6 @@ const Dashboard = () => {
           .order("data_nascimento", { ascending: true });
 
         if (error) throw error;
-
         setAniversariantes(data || []);
       } catch (err) {
         console.error("❌ Erro ao carregar aniversariantes:", err);
@@ -38,16 +40,18 @@ const Dashboard = () => {
     fetchAniversariantes();
   }, []);
 
-  // Aniversariantes de hoje
+  // 🔎 Aniversariantes do dia
   const aniversariantesHoje = aniversariantes.filter((a) =>
     ehAniversarioHoje(a.data_nascimento)
   );
 
-  // Handlers CRUD
+  /**
+   * Cria/atualiza aniversariante
+   */
   const handleSave = async (formData: AniversarianteFormData) => {
     try {
       if (editingAniversariante) {
-        // Atualização
+        // ✏️ Atualização
         const { error } = await supabase
           .from("aniversariantes")
           .update(formData)
@@ -56,14 +60,11 @@ const Dashboard = () => {
         if (error) throw error;
 
         setAniversariantes((prev) =>
-          prev.map((a) =>
-            a.id === editingAniversariante.id ? { ...a, ...formData } : a
-          )
+          prev.map((a) => (a.id === editingAniversariante.id ? { ...a, ...formData } : a))
         );
-
         toast.success("✏️ Aniversariante atualizado com sucesso!");
       } else {
-        // Inserção
+        // ➕ Inserção
         const { data, error } = await supabase
           .from("aniversariantes")
           .insert([formData])
@@ -90,15 +91,29 @@ const Dashboard = () => {
     setIsFormOpen(true);
   };
 
-  const handleDelete = async (id: string) => {
+  /**
+   * Exclui aniversariante:
+   * 1) tenta remover a foto do Storage (se existir)
+   * 2) remove o registro do banco
+   * 3) atualiza a lista local
+   */
+  const handleDelete = async (id: string, foto?: string) => {
     try {
-      const { error } = await supabase
-        .from("aniversariantes")
-        .delete()
-        .eq("id", id);
+      // 1) Remover a imagem do Storage (se tiver URL)
+      if (foto && foto.trim() !== "") {
+        const ok = await deleteImage(foto);
+        if (!ok) {
+          // Não vamos bloquear a exclusão do registro se a remoção do arquivo falhar,
+          // apenas avisamos. Assim o banco não fica com lixo.
+          toast.warn("Atenção: não foi possível remover a foto no Storage.");
+        }
+      }
 
+      // 2) Remover o registro no banco
+      const { error } = await supabase.from("aniversariantes").delete().eq("id", id);
       if (error) throw error;
 
+      // 3) Atualizar o estado local
       setAniversariantes((prev) => prev.filter((a) => a.id !== id));
       toast.info("🗑️ Aniversariante excluído com sucesso!");
     } catch (err) {
@@ -122,7 +137,7 @@ const Dashboard = () => {
     setMesFiltro("");
   };
 
-  // Aplicar filtros
+  // 🧮 Filtros (nome + mês)
   const aniversariantesFiltrados = aniversariantes.filter((a) => {
     const nomeMatch = a.nome.toLowerCase().includes(search.toLowerCase());
     const mesMatch =
@@ -130,7 +145,7 @@ const Dashboard = () => {
     return nomeMatch && mesMatch;
   });
 
-  // Aplicar limite
+  // 🔢 Limite de linhas exibidas
   const aniversariantesLimitados = aniversariantesFiltrados.slice(-limit);
 
   if (loading) {
@@ -214,7 +229,7 @@ const Dashboard = () => {
       <AniversarianteTable
         aniversariantes={aniversariantesLimitados}
         onEdit={handleEdit}
-        onDelete={handleDelete}
+        onDelete={handleDelete} // 🔹 agora recebe (id, foto?)
       />
 
       {/* Controle de exibição */}
@@ -232,7 +247,7 @@ const Dashboard = () => {
         ))}
       </div>
 
-      {/* Formulário */}
+      {/* Modal de formulário */}
       <AniversarianteForm
         aniversariante={editingAniversariante}
         onSave={handleSave}

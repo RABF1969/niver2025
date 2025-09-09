@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { Moon, Sun, Menu, X } from "lucide-react";
+import { supabase } from "../lib/supabase";
 
 interface NavbarProps {
   darkMode: boolean;
@@ -9,6 +10,19 @@ interface NavbarProps {
 
 const Navbar: React.FC<NavbarProps> = ({ darkMode, toggleDarkMode }) => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const navigate = useNavigate();
+
+  /**
+   * Faz logout do Supabase e redireciona para tela de login
+   */
+  const handleLogout = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      console.error("❌ Erro ao sair:", error.message);
+    } else {
+      navigate("/login");
+    }
+  };
 
   return (
     <nav className="bg-gray-900 text-white shadow-lg dark:bg-gray-800 fixed w-full z-50">
@@ -16,11 +30,7 @@ const Navbar: React.FC<NavbarProps> = ({ darkMode, toggleDarkMode }) => {
         <div className="flex justify-between h-16 items-center">
           {/* Logo */}
           <Link to="/" className="flex items-center">
-            <img
-              src="/logo.png"
-              alt="Logo Alfabiz"
-              className="h-10 w-auto"
-            />
+            <img src="/logo.png" alt="Logo Alfabiz" className="h-10 w-auto" />
           </Link>
 
           {/* Botão Hamburger no Mobile */}
@@ -65,7 +75,10 @@ const Navbar: React.FC<NavbarProps> = ({ darkMode, toggleDarkMode }) => {
             </button>
 
             {/* Logout */}
-            <button className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-md text-white">
+            <button
+              onClick={handleLogout}
+              className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-md text-white"
+            >
               Sair
             </button>
           </div>
@@ -107,7 +120,13 @@ const Navbar: React.FC<NavbarProps> = ({ darkMode, toggleDarkMode }) => {
           </button>
 
           {/* Logout */}
-          <button className="w-full bg-red-500 hover:bg-red-600 px-4 py-2 rounded-md text-white">
+          <button
+            onClick={() => {
+              handleLogout();
+              setMenuOpen(false);
+            }}
+            className="w-full bg-red-500 hover:bg-red-600 px-4 py-2 rounded-md text-white"
+          >
             Sair
           </button>
         </div>
